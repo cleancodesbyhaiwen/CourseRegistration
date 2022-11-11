@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <title>
+          {% block title %}
+
+          {% endblock %}
+      </title>
+   </head>
+   <body>
+        <nav style="font-family: Cursive;">
+            <div>
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav">                                              
+                    <li style="float:right"><a href="{{ url_for('logout_page') }}">LOGOUT</a></li>
+                    <li style="float:right"><a href="#">{{current_user.username}}</a></li>
+                </ul>
+              {% else %}
+                <ul class="navbar-nav">
+                    <li><a class="nav-link" href="{{ url_for('login_page') }}">Login</a></li>
+                </ul>  
+              {% endif %}
+            </div>
+        </nav>   
+        {% with messages = get_flashed_messages(with_categories=false) %}
+        {% if messages %}
+           {% for message in messages %}
+           <div class="alert" style="font-size:20px;font-family:cursive;">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{message}}
+          </div>
+           {% endfor %}
+        {% endif %}
+      {% endwith %}  
+
+      {% block content %}
+
+      {% endblock %}
+
+      <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" 
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" 
+      crossorigin="anonymous"></script>
+   </body>
+   <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+        body{
+            text-align: center;
+            background: #efefef;
+            height: 100vh; 
+        }
+        li {
+            float: left;
+        }
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        li a:hover {
+            background-color: #111;
+        }
+        .alert {
+            padding: 10px;
+            background-color: rgb(88, 196, 88); 
+            color: white;
+            margin-bottom: 15px;
+        }
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .closebtn:hover {
+            color: black;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgb(201, 196, 196);
+            border-radius: 10px;
+        }
+   </style>
+</html>

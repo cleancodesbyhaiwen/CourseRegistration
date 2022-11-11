@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block title %}
+Student MAIN
+{% endblock %}
+{% block content %}
+
+    <body>
+        <link rel="stylesheet" href="../templates/css/login.css">
+        <div class="container">
+            <div class="box" id="search-class" style="margin-top: 20px;">
+                <form method="POST">
+                    <label for="searchby">Search By:</label>
+                    <select id="searchby" name="searchby">
+                        <option value="header">header i.e. COMS</option>
+                        <option value="ID">ID i.e. 4111</option>
+                        <option value="name">name i.e. database</option>
+                    </select>
+                    <input type="text" id="specifier" name="specifier"></input>
+                    <input type="submit" id="search" name="search" value="search"></input>
+                </form>
+                <hr>
+                {% for course in courses %}
+                <div class="singleCourse">
+                    <div>
+                        Name: {{course[3]}}
+                        <hr>
+                        ID: {{course[2]}}
+                        <hr>
+                        Instructor:{{course[11]}}
+                        <hr>
+                        Offered by College of: {{course[5]}}
+                        <hr>
+                        Credit Hour: {{course[6]}}
+                        <hr>
+                        Classrooms: {{course.building_name}} {{course.room}} 
+                        <hr>
+                        Enrolled: {{enrolled_counts[loop.index-1]}}/{{course.size}} 
+                        <hr>
+                        {% for time_period in all_time_periods[loop.index-1] %}
+                        Period {{loop.index}}:
+                        {% if time_period.day_of_week==1 %}Monday
+                        {% elif time_period.day_of_week==2 %}Tuseday
+                        {% elif time_period.day_of_week==3 %}Wednseday
+                        {% elif time_period.day_of_week==4 %}Thurseday
+                        {% elif time_period.day_of_week==5 %}Friday
+                        {% elif time_period.day_of_week==6 %}Saturday
+                        {% endif %}
+                        begin at: {{time_period.begin_hour}}:{{time_period.begin_minute}}
+                        duration: {{time_period.duration}} min
+                        <br>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <form method="POST">
+                            <input type="hidden" name="course_id" value="{{course[0]}}"></input>
+                            <input type="submit" id="join_waitlist" name="join_waitlist" value="join waitlist"></input>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div id="grid">
+                <div class="box">
+                    Manage your courses
+                    {% for my_course in my_courses %}
+                    <div class="singleCourse">
+                        <div>
+                            Name: {{my_course.name}}
+                            <hr>
+                            ID: {{my_course.c_id}}
+                            <hr>
+                            Status: {{my_course.status}}
+                            <hr>
+                            Offered by: {{my_course.college}}
+                            <hr>
+                            Instructor: {{my_course.instructor_name}}
+                            <hr>
+                            Credit Hour: {{my_course.credit}}
+                        </div>
+                        <div>
+                            <form method="POST">
+                                <input type="hidden" name="course_id" value="{{my_course.id}}"></input>
+                                <input type="submit" id="drop" name="drop" value="DROP"></input>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="box">
+                    Personal Information
+                    <div  id="personal-info">
+                        Name: {{user.name}}
+                        <hr>
+                        class_standing: {{user.class_standing}}
+                        <hr>
+                        {% if user.is_ta == True %}
+                        TA status: Currently a TA
+                        {% else %}
+                        TA status: Currently NOT a TA
+                        {% endif %}
+                        <hr>
+                        college: {{user.college}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <style>
+        #personal-info{
+            border-style:none;
+            margin-top:20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: white;
+        }
+        select{
+            font-family: Cursive;
+            font-size: 20px;
+        }
+        input{
+            font-family: Cursive;
+            font-size: 20px;
+        }
+        .container{
+            width: 100%;
+        }
+        #grid{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 30px;
+            grid-gap: 10px;
+            width: 100%;
+        }
+        .box{
+            text-align: left;
+            padding: 20px;
+            height: 40vh;
+            border-style: none;
+            overflow: scroll;
+            background-color:rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
+            font-family: Cursive;
+            font-size: 20px;
+        }
+        .singleCourse{
+            display: grid;
+            grid-template-columns: 9fr 1fr;
+            grid-gap: 20px;
+            padding: 20px;
+            text-align: left;
+            width:90%;
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 150px;
+            background-color: white;
+            overflow: scroll;
+            border-radius: 10px;
+            
+        }
+    </style>
+
+{% endblock %}

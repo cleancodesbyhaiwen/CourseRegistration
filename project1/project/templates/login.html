@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}
+LOGIN
+{% endblock %}
+{% block content %}
+<body>
+    <div class="container">
+        <div id="login-box">
+            <form method="POST">
+                <input type="text" id="username" name="username" placeholder="Username.."></input>
+                <input type="password" id="password" name="password" placeholder="Password.."></input>
+                <label for="roles">Choose your role:</label>
+                <select id="roles" name="roles">
+                    <option value="student">student</option>
+                    <option value="instructor">instructor</option>
+                </select>
+                <hr>
+                <input type="submit" id="login" name="login" value="LOGIN"></input>
+            </form>
+        </div>
+    </div>
+</body>
+<style>
+    select{
+        font-family: Cursive;
+        font-size: 25px;
+    }
+    body{
+        text-align: center;
+        background: #efefef;
+        height: 100vh; 
+    }
+    #registerbutton{
+        border-radius: 5px;
+        background-color: rgb(96, 214, 96);
+        border-style: none;
+        padding: 5px;
+        color: white;
+    }
+    #registerbutton:hover{
+        background-color: rgb(88, 196, 88);
+    }
+    #login{
+        border-radius: 5px;
+        background-color: rgb(35, 98, 235);
+        border-style: none;
+        padding: 2px;
+        color: white;
+    }
+    #login:hover{
+        background-color:rgb(35, 89, 206);
+    }
+    input{
+        width: 100%; 
+        margin-bottom: 10px;
+        border-radius: 5px;
+        font-size: 30px;
+        border-style: none;
+        margin-bottom: 20px;
+    }
+    #login-box{
+        width: 400px;
+        background-color:rgba(255, 255, 255, 0.5);
+        padding: 30px;
+        border-radius: 5px;
+        font-family: Cursive;
+        font-size: 25px;
+        -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+        box-shadow: 0 0 10px rgb(207, 204, 204);
+    }
+    .container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80%;
+    }
+</style>
+{% endblock %}
