@@ -5,20 +5,23 @@ Student MAIN
 {% block content %}
 
     <body>
-        <link rel="stylesheet" href="../templates/css/login.css">
         <div class="container">
-            <div class="box" id="search-class" style="margin-top: 20px;">
+            <div class="search_area" style="margin-top: 20px;">
                 <form method="POST">
                     <label for="searchby">Search By:</label>
                     <select id="searchby" name="searchby">
-                        <option value="header">header i.e. COMS</option>
-                        <option value="ID">ID i.e. 4111</option>
-                        <option value="name">name i.e. database</option>
+                        <option value="header">Header e.g. COMS</option>
+                        <option value="ID">ID e.g. 4111</option>
+                        <option value="name">Name e.g. database</option>
+                        <option value="allCourses">All Courses</option>
                     </select>
                     <input type="text" id="specifier" name="specifier"></input>
-                    <input type="submit" id="search" name="search" value="search"></input>
+                    <input type="submit" id="search" onclick="show_search()" 
+                    name="search" value="search"></input>
                 </form>
-                <hr>
+                {% if courses|length == 0 and search %}
+                <h1>No Course Were Found</h1>
+                {% endif %}
                 {% for course in courses %}
                 <div class="singleCourse">
                     <div>
@@ -29,7 +32,8 @@ Student MAIN
                         Instructor:{{course[11]}}
                         <hr>
                         Offered by College of: {{course[5]}}
-                        <hr>
+                    </div>
+                    <div>
                         Credit Hour: {{course[6]}}
                         <hr>
                         Classrooms: {{course.building_name}} {{course.room}} 
@@ -59,107 +63,209 @@ Student MAIN
                 </div>
                 {% endfor %}
             </div>
-            <div id="grid">
-                <div class="box">
-                    Manage your courses
-                    {% for my_course in my_courses %}
-                    <div class="singleCourse">
-                        <div>
-                            Name: {{my_course.name}}
-                            <hr>
-                            ID: {{my_course.c_id}}
-                            <hr>
-                            Status: {{my_course.status}}
-                            <hr>
-                            Offered by: {{my_course.college}}
-                            <hr>
-                            Instructor: {{my_course.instructor_name}}
-                            <hr>
-                            Credit Hour: {{my_course.credit}}
-                        </div>
-                        <div>
-                            <form method="POST">
-                                <input type="hidden" name="course_id" value="{{my_course.id}}"></input>
-                                <input type="submit" id="drop" name="drop" value="DROP"></input>
-                            </form>
-                        </div>
+
+            <button id="myCourseButton" onclick="show_my_course()">Show My Courses</button>
+            <div class="myCourses">
+                {% for my_course in my_courses %}
+                <div class="singleCourse">
+                    <div>
+                        Name: {{my_course.name}}
+                        <hr>
+                        ID: {{my_course.course_header}}{{my_course.c_id}}
+                        <hr>
+                        Status: {{my_course.status}}
                     </div>
-                    {% endfor %}
+                    <div>
+                        Offered by: {{my_course.college}}
+                        <hr>
+                        Instructor: {{my_course.instructor_name}}
+                        <hr>
+                        Credit Hour: {{my_course.credit}}
+                    </div>
+                    <div>
+                        <form method="POST">
+                            <input type="hidden" name="course_id" value="{{my_course.id}}"></input>
+                            <input type="submit" id="drop" name="drop" value="DROP"></input>
+                        </form>
+                    </div>
                 </div>
-                <div class="box">
-                    Personal Information
-                    <div  id="personal-info">
-                        Name: {{user.name}}
-                        <hr>
-                        class_standing: {{user.class_standing}}
-                        <hr>
-                        {% if user.is_ta == True %}
-                        TA status: Currently a TA
-                        {% else %}
-                        TA status: Currently NOT a TA
+                {% endfor %}
+            </div>
+            <button id="myScheduleButton" onclick="show_my_schedule()">Show My Schedule</button>
+            <div class="mySchedule">
+                {% for my_course_time in all_my_course_times %}
+                    <div class="singleCourseTime">
+                        {{my_course_time.course_header}}{{my_course_time.c_id}}:
+                        {% if my_course_time.day_of_week==1 %}Monday
+                        {% elif my_course_time.day_of_week==2 %}Tuseday
+                        {% elif my_course_time.day_of_week==3 %}Wednseday
+                        {% elif my_course_time.day_of_week==4 %}Thurseday
+                        {% elif my_course_time.day_of_week==5 %}Friday
+                        {% elif my_course_time.day_of_week==6 %}Saturday
                         {% endif %}
-                        <hr>
-                        college: {{user.college}}
+                        {{my_course_time.begin_hour}}:{{my_course_time.begin_minute}}
+                        Duration: {{my_course_time.duration}}
                     </div>
+                {% endfor %}
+            </div>
+
+            <div class="personal_info">
+                <div id="personal_info_inner">
+                    Name: {{user.name}}
+                    <hr>
+                    class_standing: {{user.class_standing}}
+                    <hr>
+                    {% if user.is_ta == True %}
+                    TA status: Currently a TA
+                    {% else %}
+                    TA status: Currently NOT a TA
+                    {% endif %}
+                    <hr>
+                    college: {{user.college}}
                 </div>
             </div>
         </div>
     </body>
+    <script>
+        var myCourses = document.querySelector('.myCourses');
+        function show_my_course(){
+            myCourses.classList.toggle('myCourses_show');
+        }
+        var personal_info = document.querySelector('.personal_info');
+        function show_personal_info(){
+            personal_info.classList.toggle('personal_info_expand');
+        }
+        var mySchedule = document.querySelector('.mySchedule');
+        function show_my_schedule(){
+            mySchedule.classList.toggle('mySchedule_expand');
+        }
+        
+    </script>
     <style>
-        #personal-info{
-            border-style:none;
-            margin-top:20px;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: white;
-        }
-        select{
-            font-family: Cursive;
-            font-size: 20px;
-        }
-        input{
-            font-family: Cursive;
-            font-size: 20px;
-        }
-        .container{
-            width: 100%;
-        }
-        #grid{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            margin-top: 30px;
-            grid-gap: 10px;
-            width: 100%;
-        }
-        .box{
+        .mySchedule{
+            margin-top: 20px;
             text-align: left;
-            padding: 20px;
-            height: 40vh;
+            max-height: 0px;
             border-style: none;
-            overflow: scroll;
             background-color:rgba(255, 255, 255, 0.5);
             border-radius: 5px;
             -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
             box-shadow: 0 0 10px rgb(207, 204, 204);
-            font-family: Cursive;
             font-size: 20px;
+            transition: max-height 1s;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .mySchedule_expand{
+            overflow: scroll;
+            max-height: 40vh;
+        }
+        .singleCourseTime{
+            padding: 20px;
+            font-size: 20px;
+            text-align: left;
+            width:90%;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: white;
+            border-radius: 10px;
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
+            margin-bottom: 10px;
+        }
+        .personal_info{
+            top:-10px;
+            right: 50px;
+            position:absolute;
+            text-align: left;
+            border-style:none;
+            margin-top:20px;
+            border-radius: 10px;
+            background-color: white;
+            width: 200px;
+            max-height: 0px;
+            transition: max-height 1s;
+            overflow: hidden;
+            font-size: 20px;
+        }
+        .personal_info_expand{
+            max-height: 400px;
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
+        }
+        #personal_info_inner{
+            padding: 20px;
+        }
+        .myCourses{
+            margin-top: 20px;
+            text-align: left;
+            max-height: 0px;
+            border-style: none;
+            background-color:rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
+            font-size: 20px;
+            transition: max-height 1s;
+            overflow: hidden;
+        }
+        .myCourses_show{
+            overflow: scroll;
+            max-height: 40vh;
         }
         .singleCourse{
             display: grid;
-            grid-template-columns: 9fr 1fr;
+            grid-template-columns: 4fr 4fr 1fr;
             grid-gap: 20px;
             padding: 20px;
             text-align: left;
             width:90%;
-            margin-top: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
             margin-left: auto;
             margin-right: auto;
             height: 150px;
             background-color: white;
-            overflow: scroll;
             border-radius: 10px;
-            
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
+            align-items: center;
+        }
+        .search_area{
+            background-color:rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            padding: 10px;
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
+        }
+        select{
+            font-size: 20px;
+        }
+        button{
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        input{
+            font-size: 20px;
+        }
+        .container{
+            position: relative;
+            width: 100%;
         }
     </style>
-
+    {% if search and courses|length == 0 %}
+    <style>
+        .search_area{
+            max-height: 40vh;
+        }
+    </style>
+    {% elif search and courses|length != 0 %}
+    <style>
+        .search_area{
+            max-height: 40vh;
+            overflow: scroll;
+        }
+    </style>
+    {% endif %}
 {% endblock %}

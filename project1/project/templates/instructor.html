@@ -6,14 +6,35 @@ Instructor MAIN
     <body>
         <link rel="stylesheet" href="../templates/css/login.css">
         <div id="courseTeach">
-            course teach by you:
+            course taught by you
             {% for course_teach in courses_teach %}
                 <div class="singleCourseTeach">
-                    Course Name: {{course_teach.name}}
-                    <hr>
-                    Course ID: {{course_teach.course_header}}{{course_teach.c_id}}
-                    <hr>
-                    Enrolled Number: {{enrolled_counts[loop.index-1]}}/{{course_teach.size}} 
+                    <div>
+                        Course Name: {{course_teach.name}}
+                        <hr>
+                        Course ID: {{course_teach.course_header}}{{course_teach.c_id}}
+                        <hr>
+                        Enrolled Number: {{enrolled_counts[loop.index-1]}}/{{course_teach.size}} 
+                    </div>
+                    <div>
+                        Instructor: {{course_teach.instructor_name}}
+                        <hr>
+                        Classroom: {{course_teach.building_name}}{{course_teach.room}}
+                        <hr>
+                        {% for time_period in all_time_periods[loop.index-1] %}
+                        Period {{loop.index}}:
+                        {% if time_period.day_of_week==1 %}Monday
+                        {% elif time_period.day_of_week==2 %}Tuseday
+                        {% elif time_period.day_of_week==3 %}Wednseday
+                        {% elif time_period.day_of_week==4 %}Thurseday
+                        {% elif time_period.day_of_week==5 %}Friday
+                        {% elif time_period.day_of_week==6 %}Saturday
+                        {% endif %}
+                        begin at: {{time_period.begin_hour}}:{{time_period.begin_minute}}
+                        duration: {{time_period.duration}} min
+                        <br>
+                        {% endfor %}
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -23,13 +44,14 @@ Instructor MAIN
                 {% for waitlist_registration in waitlist_registrations %}
                 <div class="singleRegistration">
                     <div>
-                        Student Name: {{waitlist_registration.name}}
+                        Name: {{waitlist_registration.name}}
                         <hr>
-                        Student College: {{waitlist_registration.college}}
+                        College: {{waitlist_registration.college}}
                         <hr>
-                        Student Class Standing: {{waitlist_registration.class_standing}}
-                        <hr>
-                        Course Registered: {{waitlist_registration.course_header}}{{waitlist_registration.c_id}}
+                        Class Standing: {{waitlist_registration.class_standing}}
+                    </div>
+                    <div>
+                        {{waitlist_registration.course_header}}{{waitlist_registration.c_id}}
                         <hr>
                         Status: {{waitlist_registration.status}}
                         <hr>
@@ -41,7 +63,7 @@ Instructor MAIN
                             <input type="hidden" name="student_id" value="{{waitlist_registration.student_id}}"></input>
                             <input type="submit" id="deny" name="deny" value="DENY"></input>
                         </form>
-                        <hr>
+                        <br>
                         <form method="POST">
                             <input type="hidden" name="course_id" value="{{waitlist_registration.course_id}}"></input>
                             <input type="hidden" name="student_id" value="{{waitlist_registration.student_id}}"></input>
@@ -56,13 +78,14 @@ Instructor MAIN
                 {% for approved_registration in approved_registrations %}
                 <div class="singleRegistration">
                     <div>
-                        Student Name: {{approved_registration.name}}
+                        Name: {{approved_registration.name}}
                         <hr>
-                        Student College: {{approved_registration.college}}
+                        College: {{approved_registration.college}}
                         <hr>
-                        Student Class Standing: {{approved_registration.class_standing}}
-                        <hr>
-                        Course Registered: {{approved_registration.course_header}}{{approved_registration.c_id}}
+                        Class Standing: {{approved_registration.class_standing}}
+                    </div>
+                    <div>
+                        {{approved_registration.course_header}}{{approved_registration.c_id}}
                         <hr>
                         Status: {{approved_registration.status}}
                         <hr>
@@ -74,6 +97,12 @@ Instructor MAIN
                             <input type="hidden" name="student_id" value="{{approved_registration.student_id}}"></input>
                             <input type="submit" id="expel" name="expel" value="EXPEL"></input>
                         </form>
+                        <br>
+                        <form method="POST">
+                            <input type="hidden" name="course_id" value="{{approved_registration.course_id}}"></input>
+                            <input type="hidden" name="student_id" value="{{approved_registration.student_id}}"></input>
+                            <input type="submit" id="back_to_waitlist" name="back_to_waitlist" value="WAITLIST"></input>
+                        </form>
                     </div>
                 </div>
                 {% endfor %}
@@ -81,28 +110,9 @@ Instructor MAIN
         </div>
     </body>
     <style>
-        body{
-            text-align: center;
-            background: #efefef;
-            height: 100vh; 
-        }
         .singleCourseTeach{
-            padding: 20px;
-            text-align: left;
-            width:90%;
-            margin-top: 20px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 150px;
-            background-color: white;
-            overflow: scroll;
-            border-radius: 10px;
-            font-family: Cursive;
-            font-size: 20px;
-        }
-        .singleRegistration{
             display: grid;
-            grid-template-columns: 9fr 1fr;
+            grid-template-columns: 1fr 1fr;
             grid-gap: 20px;
             padding: 20px;
             text-align: left;
@@ -110,12 +120,27 @@ Instructor MAIN
             margin-top: 20px;
             margin-left: auto;
             margin-right: auto;
-            height: 200px;
             background-color: white;
-            overflow: scroll;
             border-radius: 10px;
-            font-family: Cursive;
-            font-size: 20px;
+            font-size: 15px;
+        }
+        .singleRegistration{
+            display: grid;
+            grid-template-columns: 4fr 4fr 1fr;
+            grid-gap: 20px;
+            padding: 20px;
+            text-align: left;
+            width:90%;
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 200px;
+            background-color: white;
+            overflow: hidden;
+            border-radius: 10px;
+            font-size: 15px;
+            -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
+            box-shadow: 0 0 10px rgb(207, 204, 204);
         }
         #courseTeach{
             height: 300px;
@@ -130,7 +155,7 @@ Instructor MAIN
             overflow: scroll;
             border-radius: 10px;
             font-size: 25px;
-            font-family: cursive;
+            padding: 20px;
         }
         .grid-child{
             border-style: none;
@@ -138,21 +163,21 @@ Instructor MAIN
             margin-top: 20px;
             padding: 20px;
             font-size: 25px;
-            font-family: cursive;
             border-radius: 10px;
             background-color: rgb(211, 209, 209);
             -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
             box-shadow: 0 0 10px rgb(207, 204, 204);
             overflow: scroll;
+            margin-bottom: 20px;
         }
         input{
-            font-family: Cursive;
             font-size: 20px;
         }
         .grid-parent{
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-gap: 20px;
+            
         }
     </style>
 

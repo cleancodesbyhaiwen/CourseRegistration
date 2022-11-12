@@ -10,12 +10,13 @@
       </title>
    </head>
    <body>
-        <nav style="font-family: Cursive;">
+        <nav>
             <div>
                 {% if current_user.is_authenticated %}
                 <ul class="navbar-nav">                                              
                     <li style="float:right"><a href="{{ url_for('logout_page') }}">LOGOUT</a></li>
-                    <li style="float:right"><a href="#">{{current_user.username}}</a></li>
+                    <li style="float:right" onmouseover="show_personal_info()" onmouseout="show_personal_info()"
+                    ><a href="#">{{current_user.username}}</a></li>
                 </ul>
               {% else %}
                 <ul class="navbar-nav">
@@ -27,7 +28,7 @@
         {% with messages = get_flashed_messages(with_categories=false) %}
         {% if messages %}
            {% for message in messages %}
-           <div class="alert" style="font-size:20px;font-family:cursive;">
+           <div class="alert" style="font-size:20px;">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             {{message}}
           </div>
@@ -52,7 +53,9 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #333;
+            background-color: rgb(165, 165, 165);
+            border-radius: 10px;
+            font-size: 20px;
         }
         body{
             text-align: center;
@@ -70,13 +73,14 @@
             text-decoration: none;
         }
         li a:hover {
-            background-color: #111;
+            background-color: rgb(58, 56, 56);
         }
         .alert {
             padding: 10px;
             background-color: rgb(88, 196, 88); 
             color: white;
             margin-bottom: 15px;
+            border-radius: 10px;
         }
         .closebtn {
             margin-left: 15px;
