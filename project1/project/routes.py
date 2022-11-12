@@ -4,7 +4,7 @@ from flask import request, render_template, g, redirect, url_for,flash
 from flask_login import login_user, logout_user, current_user, login_required
 from project.user import User
 
-is_student = False
+is_student = True
 
 @app.before_request
 def before_request():
@@ -92,6 +92,28 @@ def main():
         all_my_course_times.append(my_course_time)
     all_my_course_times = sorted(all_my_course_times)
 
+    conflicts = []
+    for my_course_time1 in all_my_course_times:
+      for my_course_time2 in all_my_course_times:
+        if my_course_time1[0]==my_course_time2[0] \
+        and my_course_time1[4]+my_course_time1[5]!=my_course_time2[4]+my_course_time2[5]:
+          course1_name = my_course_time1[4]+my_course_time1[5]
+          course2_name = my_course_time2[4]+my_course_time2[5]
+          if course1_name > course2_name:
+            tmp = my_course_time1
+            my_course_time1 = my_course_time2
+            my_course_time2 = tmp
+          course1_start = my_course_time1[1]*60+my_course_time1[2]
+          course1_end = my_course_time1[1]*60+my_course_time1[2]+my_course_time1[3]
+          course2_start = my_course_time2[1]*60+my_course_time2[2]
+          course2_end = my_course_time2[1]*60+my_course_time2[2]+my_course_time2[3]
+          if course1_start >= course2_start and course1_start <= course2_end:
+            conflicts.append('Conflict between {} and {}'.format(my_course_time1[4]+my_course_time1[5],
+            my_course_time2[4]+my_course_time2[5]))
+          elif course2_start>=course1_start and course2_start<=course1_end: 
+            conflicts.append('Conflict between {} and {}'.format(my_course_time1[4]+my_course_time1[5],
+            my_course_time2[4]+my_course_time2[5]))
+    conflicts = list(set(conflicts))
     if request.method == 'POST':
       # Getting Search results
       if request.form.get('search'):
@@ -136,7 +158,7 @@ def main():
 
         return render_template("student.html", user=user,courses=courses,my_courses=my_courses,
         all_time_periods=all_time_periods,enrolled_counts=enrolled_counts, search=True,
-        all_my_course_times=all_my_course_times)
+        all_my_course_times=all_my_course_times,conflicts=conflicts)
 
       # Making a registration
       if request.form.get('join_waitlist'):
@@ -178,7 +200,7 @@ def main():
         return redirect(url_for('main'))
         
     return render_template("student.html", user=user,my_courses=my_courses,
-    all_my_course_times=all_my_course_times)
+    all_my_course_times=all_my_course_times,conflicts=conflicts)
   ########################################################
   #                        Instructor                    #
   ########################################################

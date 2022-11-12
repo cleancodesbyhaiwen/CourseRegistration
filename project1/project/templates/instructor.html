@@ -6,7 +6,7 @@ Instructor MAIN
     <body>
         <link rel="stylesheet" href="../templates/css/login.css">
         <div id="courseTeach">
-            course taught by you
+            Course Taught by You
             {% for course_teach in courses_teach %}
                 <div class="singleCourseTeach">
                     <div>
@@ -152,7 +152,7 @@ Instructor MAIN
             background-color: rgb(211, 209, 209);
             -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
             box-shadow: 0 0 10px rgb(207, 204, 204);
-            overflow: scroll;
+            overflow-y: scroll;
             border-radius: 10px;
             font-size: 25px;
             padding: 20px;
@@ -167,7 +167,8 @@ Instructor MAIN
             background-color: rgb(211, 209, 209);
             -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
             box-shadow: 0 0 10px rgb(207, 204, 204);
-            overflow: scroll;
+            overflow-y: scroll;
+            overflow-x:hidden;
             margin-bottom: 20px;
         }
         input{

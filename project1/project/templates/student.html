@@ -27,7 +27,7 @@ Student MAIN
                     <div>
                         Name: {{course[3]}}
                         <hr>
-                        ID: {{course[2]}}
+                        ID: {{course[1]}}{{course[2]}}
                         <hr>
                         Instructor:{{course[11]}}
                         <hr>
@@ -93,6 +93,11 @@ Student MAIN
             </div>
             <button id="myScheduleButton" onclick="show_my_schedule()">Show My Schedule</button>
             <div class="mySchedule">
+                <div id="conflicts">
+                    {% for conflict in conflicts %}
+                    {{conflict}}<br>
+                    {% endfor %}
+                </div>
                 {% for my_course_time in all_my_course_times %}
                     <div class="singleCourseTime">
                         {{my_course_time.course_header}}{{my_course_time.c_id}}:
@@ -104,11 +109,10 @@ Student MAIN
                         {% elif my_course_time.day_of_week==6 %}Saturday
                         {% endif %}
                         {{my_course_time.begin_hour}}:{{my_course_time.begin_minute}}
-                        Duration: {{my_course_time.duration}}
+                        Duration: {{my_course_time.duration}} min
                     </div>
                 {% endfor %}
             </div>
-
             <div class="personal_info">
                 <div id="personal_info_inner">
                     Name: {{user.name}}
@@ -154,10 +158,16 @@ Student MAIN
             font-size: 20px;
             transition: max-height 1s;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
+        }
+        #conflicts{
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
         .mySchedule_expand{
-            overflow: scroll;
+            overflow-y: scroll;
             max-height: 40vh;
         }
         .singleCourseTime{
@@ -211,7 +221,7 @@ Student MAIN
             overflow: hidden;
         }
         .myCourses_show{
-            overflow: scroll;
+            overflow-y: scroll;
             max-height: 40vh;
         }
         .singleCourse{
@@ -231,6 +241,7 @@ Student MAIN
             -webkit-box-shadow: 0 0 10px rgb(207, 204, 204);
             box-shadow: 0 0 10px rgb(207, 204, 204);
             align-items: center;
+            overflow: hidden;
         }
         .search_area{
             background-color:rgba(255, 255, 255, 0.5);
@@ -264,7 +275,7 @@ Student MAIN
     <style>
         .search_area{
             max-height: 40vh;
-            overflow: scroll;
+            overflow-y: scroll;
         }
     </style>
     {% endif %}
