@@ -126,6 +126,15 @@ Student MAIN
                     {% endif %}
                     <hr>
                     college: {{user.college}}
+                    {% if user.is_ta == True %}
+                    <hr>
+                    TA Courses:
+                    {% endif %}
+                    {% if ta_courses|length != 0 %}
+                    {% for ta_course in ta_courses %}
+                    <br>{{ta_course.course_header}}{{ta_course.c_id}}
+                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>

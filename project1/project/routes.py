@@ -31,9 +31,13 @@ def login_page():
       input_password = request.form.get('password')
       is_student = True if request.form.get('roles')=='student' else False 
       if is_student:
-        user = g.conn.execute("SELECT * FROM Students WHERE username='{}'".format(username))
+        user = g.conn.execute("SELECT * FROM Students WHERE username=%(username)s;",{
+            'username': username
+        })
       else:
-        user = g.conn.execute("SELECT * FROM Instructors WHERE username='{}'".format(username))
+        user = g.conn.execute("SELECT * FROM Instructors WHERE username=%(username)s;",{
+            'username': username
+        })
       user = user.fetchone()
       if user==None:
         flash('username does not exist')
@@ -114,26 +118,37 @@ def main():
             conflicts.append('Conflict between {} and {}'.format(my_course_time1[4]+my_course_time1[5],
             my_course_time2[4]+my_course_time2[5]))
     conflicts = list(set(conflicts))
+
+    ta_courses = g.conn.execute('''
+    SELECT Courses.course_header, Courses.c_id
+    FROM Students, TA_teach, Courses
+    WHERE Students.id='{}' and Students.id=TA_teach.ta_id 
+    and Courses.id=TA_teach.course_id
+    '''.format(current_user.get_id()))
+    ta_courses = ta_courses.fetchall()
+
     if request.method == 'POST':
       # Getting Search results
       if request.form.get('search'):
         searchby = request.form.get('searchby')
         specifier = request.form.get('specifier')
         if searchby == 'header':
-          filter_ = "Courses.course_header='{}'".format(specifier)
+          filter_ = "Courses.course_header=%(specifier)s"
         elif searchby == 'ID':
-          filter_ = "Courses.c_id LIKE '%%{}%%'".format(specifier)
+          filter_ = "Courses.c_id LIKE concat('%%', %(specifier)s, '%%')"
         elif searchby == 'name':
-          filter_ = "Courses.name LIKE '%%{}%%'".format(specifier)
+          specifier = specifier.lower()
+          filter_ = "LOWER(Courses.name) LIKE concat('%%', %(specifier)s, '%%')"
         elif searchby == 'allCourses':
-          filter_ = "Courses.name LIKE '%%{}%%'".format(specifier)
+          specifier = ''
+          filter_ = "Courses.name LIKE concat('%%', %(specifier)s, '%%')"
 
         courses = g.conn.execute('''
           SELECT * 
           FROM Courses,Instruct, Instructors,Use_classroom, Classrooms
           WHERE {} and Courses.id=Instruct.course_id and Instructors.id=Instruct.instructor_id 
           and Use_classroom.course_id=Courses.id and Classrooms.id=Use_classroom.classroom_id
-          '''.format(filter_))
+          '''.format(filter_),{'specifier': specifier})
         courses = courses.fetchall()
 
         # Getting time periods and number of enrolled students accociated with each course
@@ -158,7 +173,7 @@ def main():
 
         return render_template("student.html", user=user,courses=courses,my_courses=my_courses,
         all_time_periods=all_time_periods,enrolled_counts=enrolled_counts, search=True,
-        all_my_course_times=all_my_course_times,conflicts=conflicts)
+        all_my_course_times=all_my_course_times,conflicts=conflicts,ta_courses=ta_courses)
 
       # Making a registration
       if request.form.get('join_waitlist'):
@@ -200,7 +215,7 @@ def main():
         return redirect(url_for('main'))
         
     return render_template("student.html", user=user,my_courses=my_courses,
-    all_my_course_times=all_my_course_times,conflicts=conflicts)
+    all_my_course_times=all_my_course_times,conflicts=conflicts,ta_courses=ta_courses)
   ########################################################
   #                        Instructor                    #
   ########################################################
